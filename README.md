@@ -1,2 +1,2 @@
 # indavi
-Interactive Data Visualization
+Interactive Data Visualization With grammer of graphics
