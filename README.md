@@ -1,2 +1,2 @@
-# indavi
+# IndavI
 Interactive Data Visualization With grammer of graphics
