@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css" />
+<body>
+<script src="d3.v3.min.js"></script>
+<script src="render.js"></script>
+<script src="InteractionLib.js"></script>
+<script src="Geometry.js"></script>
+<script src="scale.js"></script>
+<script src="plots.js"></script>
+<script>
+
+
+    var boxplot=new plots({data:"boxplot.csv",geometry:"boxplot-chart",scale:"linear",coordinate:"cartesian"});
+   boxplot.render(800,400,"body");
+
+
+    var scatter=new plots({data:"Book1.csv",dim1:"Fat",dim2:"Fat",geometry:"circle",scale:"linear",coordinate:"cartesian"});
+    scatter.render(400,400,"body");
+
+    var scatterplotmatrix=new plots({data:"Book1.csv",geometry:"scatter-plot-matrix",color:"Fat",scale:"linear",coordinate:"cartesian"});
+    scatterplotmatrix.render(2200,2200,"body");
+
+    var scatterplotmatrix=new plots({data:"Book1.csv",geometry:"histogram",dim1:"Fat"});
+    scatterplotmatrix.render(500,500,"body");
+</script>
