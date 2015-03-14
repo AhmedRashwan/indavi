@@ -1,256 +1,5 @@
-/**
- * Created by Ahmed Medhat on 10-Mar-15.
- */
-/**
- * Created by Sweelam on 05/03/2015.
- */
+/*Render.js version 1.0 */
 
-/***************************************************Scale*************************************************************/
-var Scale = {};             // Parent Scale Object.
-
-Scale.Quntitative = {};     // Quantitative types of scale.
-
-Scale.Ordinal = {};         // Ordinal types : String and characters .
-
-/**
- * @Description
- * Time scale is several types , we consider with normal data e.g ( 2015 , 7 , 21 )
- * @type {{object}}
- */
-Scale.Time = {};
-
-/**
- *  Description
- * @ method : Linear Scale
- * @ inputs : (Object of Data set , Col Header ) OR ( Minimum Domain , Maximum Domain) , Minimum Range , Maximum Range ,(axis) X || Y.
- * @ return : Object
- * */
-Scale.Quntitative.linear = function(Dataset,max_col_name,min_col_name,max_domain,min_domain,max_range,min_range,axis){
-    if(axis=="x" || axis=="X"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-            return d3.scale.linear()
-                .domain([min_domain , max_domain])
-                .range([min_range,max_range]);
-        }
-        else {
-            return d3.scale.linear()
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([min_range,max_range]);
-        }
-
-    }
-    else if(axis=="y" || axis=="Y"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-
-            return d3.scale.linear()
-                .domain([min_domain , max_domain])
-                .range([max_range,min_range]);
-        }
-        else {
-            return d3.scale.linear()
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([max_range,min_range]);
-        }
-
-    }
-    else
-    {
-        console.log("error occur in scale Linear method");
-    }
-};
-
-/**
- *  Description
- * @ method : Power Scale
- * @ inputs : (Data set , Col Header ) OR ( Minimum Domain , Maximum Domain) , Minimum Range , Maximum Range ,X || Y and (Power value).
- * @ return : Object
- * */
-Scale.Quntitative.power = function(Dataset,max_col_name,min_col_name,max_domain,min_domain,max_range,min_range,axis,to_the_pow){
-    if(axis=="x" || axis=="X"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-            return  d3.scale.pow().exponent(to_the_pow)
-                .domain([min_domain, max_domain])
-                .rangeRound([min_range, max_range]);
-        }
-        else {
-            return d3.scale.pow().exponent(to_the_pow)
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([min_range,max_range]);
-        }
-
-    }
-    else if(axis=="y" || axis=="Y"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-
-            return  d3.scale.pow().exponent(to_the_pow)
-                .domain([min_domain, max_domain])
-                .rangeRound([min_range, max_range]);
-        }
-        else {
-            return d3.scale.pow().exponent(to_the_pow)
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([min_range,max_range]);
-        }
-
-    }
-    else
-    {
-        console.log("error occur in scale Power method");
-    }
-};
-
-/**
- *  Description
- * @ method : Log Scale
- * @ inputs : (Object of Data set , Col Header ) OR ( Minimum Domain , Maximum Domain) , Minimum Range , Maximum Range ,(axis) X || Y.
- * @ return : Object
- * */
-Scale.Quntitative.log = function(Dataset,max_col_name,min_col_name,max_domain,min_domain,max_range,min_range,axis){
-    if (axis == "x" || axis == "X") {
-
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1) {
-            return  d3.scale.log()
-                .domain([min_domain, max_domain])
-                .rangeRound([min_range, max_range]);
-        }
-        else {
-            return d3.scale.log()
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([min_range, max_range]);
-        }
-
-    }
-    else if (axis == "y" || axis == "Y") {
-
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1) {
-
-            return d3.scale.log()
-                .domain([min_domain, max_domain])
-                .rangeRound([min_range, max_range]);
-        }
-        else {
-            return d3.scale.log()
-                .domain([d3.min(Dataset, function (d) {
-                    return +d[min_col_name];
-                }), d3.max(Dataset, function (d) {
-                    return +d[max_col_name];
-                })])
-                .range([min_range, max_range]);
-        }
-
-    }
-    else {
-        console.log("error occur in scale Log method");
-    }
-};
-
-/**
- *  Description
- * @ method : Full Date Scale in year.
- * @ inputs : (Object of Data set , Col Header ) OR ( Minimum Domain , Maximum Domain) , Minimum Range , Maximum Range ,(axis) X || Y.
- * @ return : Object
- * Hint: (start year, last year) both are mapping (mid domain, max domain).
- * */
-Scale.Time.FullDate = function(Dataset,max_col_name,min_col_name, start_year, last_year, min_range, max_range, axis){
-    var start = new Date(start_year),
-        end = new Date(last_year),
-        range = [min_range, max_range];
-
-    if(axis=="x" || axis=="X"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-            return d3.time.scale()
-                .domain([start, end])
-                .rangeRound(range);
-        }
-        else {
-            console.log("OutBoundaries of length");
-        }
-
-    }
-    else if(axis=="y" || axis=="Y"){
-
-        if(Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length<1){
-            return d3.time.scale()
-                .domain([start, end])
-                .rangeRound(range);
-        }
-        else {
-            console.log("OutBoundaries of length");
-        }
-    }
-    else
-    {
-        console.log("error occur in scale Time method");
-    }
-};
-
-/**
- * Description
- * @method: Ordinal char.
- * @param Dataset, chars_obj, max_col_name, min_col_name, axis
- * @returns ordinal char object.
- */
-Scale.Ordinal.char = function(Dataset, chars_obj, max_col_name,min_col_name,  axis) {
-    if (axis == "x" || axis == "X") {
-
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1) {
-            return d3.scale.ordinal()
-                .domain(Dataset)
-                .range(chars_obj);
-        }
-        else {
-            console.log("Error in ordinal char x-axis");
-        }
-    }
-
-    else if (axis == "y" || axis == "Y") {
-
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1){
-            return d3.scale.ordinal()
-                .domain(Dataset)
-                .range(chars_obj);
-        }
-        else {
-            console.log("Error in ordinal char y-axis");
-        }
-    }
-
-    else{
-        console.log("Error in ordinal char");
-    }
-};
-
-
-
-
-
-
-/***************************************************Geometry Elements*************************************************************/
 //Default Appending TAG
 var appending_area='#';
 
@@ -260,14 +9,19 @@ var appending_area='#';
 var Main_Bound_region = {
 
 
-    id_Main_Bound_region :0,
-    id_Group_Bound_region :0,
-    svg_width: 0,
-    svg_height: 0,
-    g_width: 0,
-    g_height: 0,
+    id_Main_Bound_region :0, // id of svg elements auto increment.
+    id_Group_Bound_region :0, // id of g elements auto increment.
+    svg_width: 0, // svg width.
+    svg_height: 0, // svg height.
+    g_width: 0, // g width.
+    g_height: 0, // g height.
 
-    //Append SVG
+    /**
+     *  Description
+     * @ method : append svg ele
+     * @ inputs :  AR ID with # symbol.
+     * @ return : Object
+     * */
     SVG: function(append){
         if( typeof append !== 'undefined') {
             if (append.length > 0) {
@@ -276,25 +30,30 @@ var Main_Bound_region = {
                     .attr("width", this.svg_width)
                     .attr("height", this.svg_height)
                     .attr("id", "svg" + this.id_Main_Bound_region);
-                this.id_Main_Bound_region++;
-                return Container;
+                this.id_Main_Bound_region++; // increment id of svg ele.
+                return Container; // return svg object.
             }
         }
 
     },
 
-    //Append G
+    /**
+     *  Description
+     * @ method : append G ele
+     * @ inputs : AR ID only.
+     * @ return : Object
+     * */
     G: function (append) {
 
-        if( typeof append !== 'undefined') {
+        if( typeof append !== 'undefined') { // check if no passing arguments.
             if (append.length > 0) {
 
                 if (append == 'svg' || append == 'SVG')
-                    append = '#svg' + (this.id_Main_Bound_region - 1);
+                    append = '#svg' + (this.id_Main_Bound_region - 1); // append at last svg.
                 else if (append == 'body')
-                    append = 'body';
+                    append = 'body'; // append body.
                 else
-                    append = '#' + append;
+                    append = '#' + append; // append at specify id.
 
 
                 var GContainer = d3.select(append)
@@ -302,100 +61,88 @@ var Main_Bound_region = {
                     .attr("width", this.g_width)
                     .attr("height", this.g_height)
                     .attr("id", "g" + this.id_Group_Bound_region);
-                this.id_Group_Bound_region++;
-                return GContainer;
+                this.id_Group_Bound_region++; // increment g id.
+                return GContainer; // return object of g ele.
             }
         }
     }
 };
 
 
-/* The object that holds all geometry primitives */
+/* The object that holds all geometry primitives ele */
 var Geo_Primitives = {
 
     /**
      *  Description
-     * @ method : Label (for axis)
-     * @ inputs : Text , axis type (x,y) , AR ID.
-     * @ return : Object
-     * */
-    Label:function(text,axis_type,append){
-        var width=d3.select(appending_area+append).attr("width");
-        var height=d3.select(appending_area+append).attr("height");
-
-
-
-        if(axis_type=='Y' || axis_type=='y') {
-            return d3.select(appending_area + append)
-                .append("text")      // text label for the x axis
-                //.attr("transform", "rotate(-90)")
-                .attr("x", height/2)
-                .attr("y",parseInt(width)+55)
-                .style("text-anchor", "middle")
-                .style("font", "15px sans-serif")
-                .text(text);
-        }
-        if(axis_type=='x' || axis_type=='X')
-        {
-            return d3.select(appending_area + append)
-                .append("text")      // text label for the x axis
-                .attr("x", -20 )
-                .attr("y", -10 )
-                .style("text-anchor", "middle")
-                .style("font", "15px sans-serif")
-                .text(text);
-        }
-    },
-
-
-
-    //NOT FOR TEST
-    /**
-     *  Description
      * @ method : Draw_Axis
-     * @ inputs :(Object of Data set , Col Header ) OR ( Minimum Domain , Maximum Domain) ,(Type) Vertical || Horizontal and Number of Ticks , AR ID.
+     * @ inputs :(Type) Vertical || Horizontal , Number of Ticks , scale method of axis , gridline option (bool) and AR ID.
      * @ return : Object
      * */
-    Draw_Axis: function(type,no_ticks,scale,gridline,where_append){
-        var c;
-        var max_range;
-        var min_range=0;
+    Draw_Axis: function(type,label,no_ticks,scale,gridline,where_append){
+
         var app= appending_area+where_append;
-        if(type=="H" || type=="h") {
 
+        if(type=="H" || type=="h") { // for x-axis.
 
-
-            if(gridline==true) {
-                d3.select(app).selectAll("line.x")
+            if(gridline==true) { // enable gridline.
+                d3.select(app).selectAll("line.x")//for more CSS options.
                     .data(scale.ticks(no_ticks))
                     .enter().append("line")
                     .attr("x1", 0)
                     .attr("x2", d3.select(app).attr("width"))
                     .attr("y1", scale)
                     .attr("y2", scale)
+                    .attr("id","H_gridline")
                     .style("stroke", "#ccc");
             }
+
+
+
+
             var axis_coordinate = d3.svg.axis().ticks(no_ticks).orient("bottom").scale(scale);
             var endy=d3.select(app).attr("height");
-            return d3.select(app).append("g").attr("transform", "translate(0,"+endy+")").call(axis_coordinate);
+
+            //Label of axis
+            d3.select(app)
+                .append("text")      // text label for the x axis
+                .attr("x",d3.select(app).attr("width"))
+                .attr("y",parseInt(endy)+40)
+                .style("text-anchor", "end")
+                .style("font", "15px sans-serif")
+                .style("font-weight","bold")
+                .text(label);
+
+            return d3.select(app).append("g").attr("transform", "translate(0,"+endy+")").call(axis_coordinate);// translate (0,width).
 
 
         }
-        if(type=="V" || type=="v")
+        if(type=="V" || type=="v") // for y-axis.
         {
             if(gridline==true) {
-                d3.select(app).selectAll("line.x")
+                d3.select(app).selectAll("line.y")//for more CSS options.
                     .data(scale.ticks(no_ticks))
                     .enter().append("line")
                     .attr("x1", scale)
                     .attr("x2", scale)
                     .attr("y1", 0)
                     .attr("y2", d3.select(app).attr("height"))
+                    .attr("id","V_gridline")
                     .style("stroke", "#ccc");
             }
             var axis_coordinate = d3.svg.axis().ticks(no_ticks).orient("left").scale(scale);
 
-            return d3.select(app).append("g").attr("transform", "translate(0,0)").call(axis_coordinate);
+            //Label of axis
+            d3.select(app)
+            .append("text")      // text label for the x axis
+            .attr("text-anchor", "end")
+            .attr("y", -40)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .style("font", "15px sans-serif")
+            .style("font-weight","bold")
+            .text(label);
+
+            return d3.select(app).append("g").attr("transform", "translate(0,0)").call(axis_coordinate); //translate to (0,0)
         }
 
     },
@@ -407,8 +154,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data set , AR id.
      * @ return : Object
      * */
-    DrawLine : function(dataObject,where_append)
-    {
+    DrawLine : function(dataObject,where_append){
         /* Default Var*/
         where_append            =  appending_area+where_append;
 
@@ -451,8 +197,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data set , AR id.
      * @ return : Object
      * */
-    DrawRect: function(dataObject,where_append)
-    {
+    DrawRect: function(dataObject,where_append){
 
         /* Default Var*/
         where_append            =  appending_area+where_append;
@@ -508,8 +253,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data , AR id.
      * @ return : Object
      * */
-    DrawCircle: function(dataObject,where_append)
-    {
+    DrawCircle: function(dataObject,where_append){
 
 
         /* Default Var*/
@@ -554,8 +298,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data , AR id.
      * @ return : Object
      * */
-    Text:function(Dataset,where_append)
-    {
+    Text:function(Dataset,where_append){
         where_append = appending_area + where_append;
 
         return d3.select(where_append)
@@ -595,8 +338,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data set ,  AR id.
      * @ return : Object
      * */
-    DrawEllipse: function(Dataset,where_append)
-    {
+    DrawEllipse: function(Dataset,where_append){
         /* Default Var*/
         where_append            =  appending_area+where_append;
 
@@ -630,82 +372,6 @@ var Geo_Primitives = {
     },
 
 
-    /**
-     *  Description
-     * @ method : Draw Polygon
-     * @ inputs : Object of Data set ,  AR id.
-     * @ return : Object
-     * */
-    DrawPolygon: function(Dataset,where_append)
-    {
-
-        /* Default Var*/
-        where_append            =  appending_area+where_append;
-
-        /* Shape D3 Drawer*/
-        return d3.select(where_append)
-            .selectAll("polygon")
-            .data(Dataset)
-            .enter()
-            .append("polygon")
-            .attr("point", function (d) {
-                return d.point;
-            })
-            .attr("fill", function (d) {
-                return d.fill;
-            })
-            .attr("stroke", function (d) {
-                return d.stroke;
-            })
-            .attr("stroke-width", function (d) {
-                return d.stroke_width;
-            })
-            .attr("fill-rule", function (d) {
-                return d.fill_rule;
-            })
-            .attr("id", function (d) {
-                return d.id;
-            })
-
-
-    },
-
-
-    /**
-     *  Description
-     * @ method : Draw_Ployline
-     * @ inputs : Object of Data set ,  AR id.
-     * @ retuen : Object
-     * */
-    DrawPolyline: function(Dataset,where_append)
-    {
-
-        /* Default Var*/
-        where_append            =  appending_area+where_append;
-
-        return d3.select(where_append)
-            .selectAll("polyline")
-            .data(Dataset)
-            .enter()
-            .append("polyline")
-            .attr("point", function (d) {
-                return d.point;
-            })
-            .attr("fill", function (d) {
-                return d.fill;
-            })
-            .attr("stroke", function (d) {
-                return d.stroke;
-            })
-            .attr("stroke-width", function (d) {
-                return d.stroke_width;
-            })
-            .attr("id", function (d) {
-                return d.id;
-            })
-
-    },
-
 
     /**
      *  Description
@@ -713,7 +379,7 @@ var Geo_Primitives = {
      * @ inputs : Object of Data set , Interpolate (type) , Stroke  , Stroke_width , Fill , AR ID.
      * @ return : Object
      * */
-    Path: function (Dataset,interpolate,stroke,stroke_width,fill,where_append) {
+    Path: function (Dataset,interpolate,stroke,stroke_width,fill,id,where_append) {
 
         /*example for dataset
          var lineData = [ { "x": 1,   "y": 5},  { "x": 20,  "y": 20},
@@ -756,7 +422,8 @@ var Geo_Primitives = {
                 .attr("d", lineFunction(Dataset))
                 .attr("stroke", stroke)
                 .attr("stroke-width", stroke_width)
-                .attr("fill", fill);
+                .attr("fill", fill)
+                .attr("id",id);
         }
     }
 
