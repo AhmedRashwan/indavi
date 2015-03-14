@@ -1,0 +1,111 @@
+<html ng-app="demoApp">
+    <head>
+    <link rel="stylesheet" type="text/css" href="design.css">
+    <title>Data Visualization</title>
+    <script src="d3/d3.min.js"></script>
+    <script src="scatterplot.js"></script>
+    </head>
+    <body >
+<div ng-view>
+ </div>
+        
+        <script src="angular-1.2.23/angular.min.js"></script>
+        <script src="angular-1.2.23/angular-route.min.js"></script>
+        <script src="CSV_TO_JSON.js"></script>
+        
+        <script type="text/javascript">            
+       var demoApp = angular.module('demoApp' , ['ngRoute']);
+           demoApp.config(function($routeProvider){
+                $routeProvider
+                             .when('/',
+                            {
+                                controller: 'dataSetController',
+                                 templateUrl: 'view1.html'
+                            })
+                            .when('/view2',
+                            {
+                                controller: 'jsonFileController',
+                                templateUrl: 'view2.html'
+                            })
+                            .otherwise({redirectTo: '/'})       
+            }); 
+           demoApp.service('sharedDataObject', function () {
+                var dataObject;
+                return {
+                            getDataObject: function () {
+                                return dataObject;
+                            },
+                            setDataObject: function(value) {
+                                dataObject = value;
+                            }
+                };
+            });//this service to share Data Object between controlles(graphs)
+           demoApp.service('shareImportedGraphs' ,function(){
+                var ImportedGraphsList = [];
+                return {
+                            getImportedList : function(){return ImportedGraphsList;},
+                            setImportedList : function(newGraph){ImportedGraphsList.push(newGraph);}
+                        };
+
+            });//this service to share Json File Info between Controlles
+           demoApp.controller('jsonFileController',jsonFileController);    //this controlle to get Data from Json file and put it On (shareDataObject service)   
+        function jsonFileController($scope , $http , sharedDataObject , shareImportedGraphs){
+        $scope.ScatterPlot =  function(){arrange(sharedDataObject.getDataObject());} 
+       /* $scope.jsonData;
+        $scope.graphs = [];      
+        $scope.graphsFunctions = [];//save for every graph loaded from Json file his own function 
+        $scope.count=0;
+        $scope.getJsonFile = function(){
+                $scope.jsonFile = document.getElementById('jsonData').files[0].name;//in the view2 there are Brouse tag (<Input type = "file">)this variable save Json file name
+                $http.get($scope.jsonFile).success(function(data){
+                        $scope.jsonData = data;
+                        console.log($scope.jsonData.start);
+                        $scope.graphs.push(data);
+                        shareImportedGraphs.setImportedList(data);
+                        parseJsonObject();
+                        window.setTimeout(function(){//wait half second before execution
+                                $scope.count++;
+                                $scope.graphsFunctions.push(function(){window[$scope.jsonData.function1](sharedDataObject.getDataObject());});
+                                //var entire = $scope.graphsFunctions[$scope.graphsFunctions.length-1].toString();
+                               //var body = entire.substring(entire.indexOf("{") + 1, entire.lastIndexOf("}"));
+            }, 500);
+  
+    });
+    
+        function parseJsonObject()//put name of JS file in the header of page
+     {  
+        var my_awesome_script = document.createElement('script');
+        my_awesome_script.setAttribute('src',$scope.jsonData.start);
+        document.head.appendChild(my_awesome_script);
+     }
+    };*/
+    };
+    demoApp.controller('dataSetController',dataSetController);//load data set and but it on sharedDataObject service
+          function dataSetController($scope , sharedDataObject){
+        $scope.datasetfile;
+        $scope.file;
+        $scope.getDataSetFile = function(){
+            $scope.datasetfile = document.getElementById('dataset').files[0].name;
+            $scope.file = document.getElementById('dataset').files[0];
+            var reader = new FileReader();
+            reader.onload = function (evt) { 
+                var result = evt.target.result;
+                var Json;
+               Json = CSV2JSON(result);
+               dataset = JSON.parse(Json);
+               sharedDataObject.setDataObject(dataset);
+               console.log(dataset);
+             };
+           reader.readAsText($scope.file);
+         /*             d3.csv($scope.datasetfile , function(data){
+                            sharedDataObject.setDataObject(data);  
+                            console.log(data);
+    });*/
+            $scope.$apply();
+        };
+                
+                   };
+     
+        </script>
+</body>
+</html>
