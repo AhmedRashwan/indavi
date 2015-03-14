@@ -1,8 +1,4 @@
-/**
- * Created by Ahmed Medhat on 10-Mar-15.
- */
-
-
+/*Geometry.js version 1.0 */
 
 //Histogram Methods
 function frequancy_object(list) {
@@ -42,16 +38,14 @@ function frequancy_object(list) {
 
     }
     return converttojson(list2);
-}
+} // get frequency of number in array
 function converttojson(res){
     var arrobj = [];
     for(var i = 0;i<res.length;i++)
         arrobj.push({"key" :res[i][0],"value" : res[i][1]});
 
     return JSON.parse(JSON.stringify(arrobj));
-}
-
-/*-----------------------------------------------------------------------------------------------*/
+} // generate data object with key and its frequency
 
 
 //Dataset Methods
@@ -81,137 +75,109 @@ function maxmin_of_dataset(csv){
         }
     }
     return tmax+","+tmin;
-}
+} // return max and min number of all cols in dataset as "max,min"
 function keys_of_objects(Dataset){
     return d3.keys(Dataset[0]).filter(function (d) {
         return d;
     });
-}
+} // filter dataset and return cols header name or keys
 function values_of_key(Dataset,key,values){
     d3.select("body")
         .selectAll("x")
         .data(Dataset,function (d){values.push(d[key])});
 
-}
+} // pass all values of key to values array as ["1","2",...,"5"]
 function values_of_key_int(Dataset,key,values){
     d3.select("body")
-        .selectAll("x")
+        .selectAll("x") //for recall only
         .data(Dataset,function (d){values.push(parseInt(d[key]))});
 
-}
+} // pass all values of key to values array as integer [1,2,...,5]
 
+//Create data object of each geometry ele.
+var Fill_DataObject = {
+    circle:function(DataObject,cx,cy,r,stroke,stroke_width,fill,id){
+        DataObject.push({
+            cx:cx ,
+            cy:cy ,
+            r:r,
+            stroke:stroke,
+            stroke_width:stroke_width,
+            fill:fill,
+            id:id
+        });
 
-/*-----------------------------------------------------------------------------------------------*/
+    },
+    rect:function(DataObject,x,y,width,height,rx,ry,fill,stroke,stroke_width,fill_opacity,id){
+        DataObject.push({
+            x:x,
+            y:y,
+            width:width,
+            height:height,
+            rx:rx,
+            ry:ry,
+            fill:fill,
+            stroke:stroke,
+            stroke_width:stroke_width,
+            fill_opacity:fill_opacity,
+            id:id
+        });
 
+    },
+    line:function(DataObject,x1,y1,x2,y2,stroke,stroke_width,id){
+        DataObject.push({
+            x1:x1,
+            y1:y1,
+            x2:x2,
+            y2:y2,
+            stroke:stroke,
+            stroke_width:stroke_width,
+            id:id
+        });
 
-//Data Object OF Shapes
-function Generate_DataObject_Circle(DataObject,cx,cy,r,stroke,stroke_width,fill,id){
+    },
+    text:function(DataObject,x,y,text_anchor,style,color,text,id){
+        DataObject.push({
+            x:x,
+            y:y,
+            text:text,
+            text_anchor:text_anchor,
+            style:style,
+            color:color,
+            id:id
 
-    DataObject.push({
-        cx:cx ,
-        cy:cy ,
-        r:r,
-        stroke:stroke,
-        stroke_width:stroke_width,
-        fill:fill,
-        id:id
-    });
+        });
+    },
+    ellipse:function(DataObject,cx,cy,rx,ry,fill,id){
+        DataObject.push({
+            cx:cx,
+            cy:cy,
+            rx:rx,
+            ry:ry,
+            fill:fill,
+            id:id
 
-
-}
-function Generate_DataObject_Rect(DataObject,x,y,width,height,rx,ry,fill,stroke,stroke_width,fill_opacity,id){
-    DataObject.push({
-        x:x,
-        y:y,
-        width:width,
-        height:height,
-        rx:rx,
-        ry:ry,
-        fill:fill,
-        stroke:stroke,
-        stroke_width:stroke_width,
-        fill_opacity:fill_opacity,
-        id:id
-    });
-
-}
-function Generate_DataObject_line(DataObject,x1,y1,x2,y2,stroke,stroke_width,id){
-
-    DataObject.push({
-        x1:x1,
-        y1:y1,
-        x2:x2,
-        y2:y2,
-        stroke:stroke,
-        stroke_width:stroke_width,
-        id:id
-    });
-
-}
-function Generate_DataObject_text(DataObject,x,y,text_anchor,style,color,text,id){
-    DataObject.push({
-        x:x,
-        y:y,
-        text:text,
-        text_anchor:text_anchor,
-        style:style,
-        color:color,
-        id:id
-
-    });
-}
-function Generate_DataObject_Ellipse(DataObject,cx,cy,rx,ry,fill,id){
-    DataObject.push({
-        cx:cx,
-        cy:cy,
-        rx:rx,
-        ry:ry,
-        fill:fill,
-        id:id
-
-    });
-}
-function Generate_DataObject_Polygon(DataObject,point,fill,stroke,stroke_width,fill_rule,id){
-    DataObject.push({
-        point:point,
-        fill:fill,
-        stroke:stroke,
-        stroke_width:stroke_width,
-        fill_rule:fill_rule,
-        id:id
-
-    });
-}
-function Generate_DataObject_Polyline(DataObject,point,fill,stroke,stroke_width,id){
-    DataObject.push({
-        point:point,
-        fill:fill,
-        stroke:stroke,
-        stroke_width:stroke_width,
-        id:id
-
-    });
-}
-
-/*-----------------------------------------------------------------------------------------------*/
+        });
+    }
+};
 
 
 //Arrays Methods
 function max_of_array(data){
     return d3.max(data,function (d){return +d;})
-}
+} //return max of array
 function min_of_array(data){
     return d3.min(data,function (d){return +d;})
-}
+} // return min of array
 function sort_array_ACE(data){
     data.sort(function(a, b){
         return a - b;
     });
 
-}
+} // sort array into ACE order
 function median_of_array(data){
     return d3.median(data,function (d){return d;});
-}
+} // return median of array
 function divide_array(data,min,max) {
     for (var i = 0; i < data.length; i++) {
         if (isEven(data.length) == true) {
@@ -230,9 +196,8 @@ function divide_array(data,min,max) {
                 max.push(data[i]);
         }
     }
-}
+} // divide sorted array into min values array and max values array
 
-/*-----------------------------------------------------------------------------------------------*/
 
 //Numbers Methods
 function isEven(n){
