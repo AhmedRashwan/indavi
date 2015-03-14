@@ -1,0 +1,17 @@
+<div class="container">
+    <input type="file"  id="dataset" name='file' onchange="angular.element(this).scope().getDataSetFile()" />
+   
+    <table>
+        <tr ng-repeat="file in files">
+            <td>{{file}}</td>
+         
+        </tr>    
+    </table>
+    <!--<input type="text" ng-model="newitem"/>
+    <input type="text" ng-model="stat"/>
+    <button ng-click="AddItem(newitem , stat)">Add Item</button>-->
+   
+ <br/>
+
+        <a href="#/view2">view 2 </a>
+</div>
