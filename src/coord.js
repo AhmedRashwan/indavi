@@ -4,7 +4,7 @@
 
 var coord = {
     Cartesian_2D : function(scale,label,ticksNum,orientation,where_append){
-        // scale = data scale object , label = text el will write on axis, ticksNum= number of ticks in axis,
+        // scale = scaled data object , label = text el will write on axis, ticksNum= number of ticks in axis,
         // orientation = (bottom or left), where_append = the position where will render el coordinate.
         var Position= appending_area+where_append;
         if(orientation=="H" || orientation=="h") { // for x-axis.
