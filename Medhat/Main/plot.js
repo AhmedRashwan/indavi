@@ -161,6 +161,7 @@ function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
 
 
     //Brushing Interaction
+    // config. of brushing 
     var brush = d3.svg.brush()
         .x(scalex)
         .y(scaley)
@@ -229,15 +230,19 @@ function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
             return col1 + "=" + Math.round(scalex.invert(d.cx) * 100) / 100 + " , " + col2 + "=" + Math.round(scaley.invert(d.cy) * 100) / 100;
         });
 
-    gbrush.call(brush);     // this is 0.1s;
+//calling brushing to interaction to each scatterplot drawen
+    gbrush.call(brush);     
 
 
+//methods of brushing and it change from plot to other
     function brushstart(){
         //brush.clear();
     }
     function brushmove() {
-        var e=brush.extent();
+        var e=brush.extent(); // get object from start point and end point for rect brush tool
         d3.selectAll("circle").classed("hidden", function(d) {
+         //return all circle that has cx in the region of brushing area only
+         //using scale.invert to retrive the orginal value of cx (before scaled) and using *100 /100 to get one number after symb ex: 12.231 = 12.2 .
             return e[0][0] > Math.round(scalex.invert(d.cx) * 100) / 100 || Math.round(scalex.invert(d.cx) * 100) / 100 > e[1][0];
             // || e[0][1] > Math.round(scaley.invert(d.cy) * 100) / 100 || Math.round(scaley.invert(d.cy) * 100) / 100 > e[1][1];
 
