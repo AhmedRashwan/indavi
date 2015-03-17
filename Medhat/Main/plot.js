@@ -1,5 +1,5 @@
 /**
- * Created by Ahmed Medhat on 28-Feb-15.
+ * Created by Ahmed Medhat on 17-Mar-15.
  */
 
 /*
@@ -54,14 +54,14 @@ plots.prototype.render = function(width,height,id) {
                 var svg= plot.SVG("body");
                 var myappend=plot.G("svg").attr("id");
                 var myappend2=plot.G(myappend).attr("transform", "translate(30,10)").attr("id");
-                svg.call(Interaction.Zoom(1,8,myappend2))
+                //          svg.call(Interaction.Zoom(1,8,myappend2))
 
                 geo_scatterplot(csv, object.dim1, object.dim2, "black", 10, 10,plot.id_Group_Bound_region,myappend2);
                 break;
             }
             case "scatter-plot-matrix":
             {
-               ScatterPlotMatrix(dataset,width,height,object.color);
+                ScatterPlotMatrix(dataset,width,height,object.color);
                 break;
             }
             case "histogram":
@@ -93,33 +93,34 @@ function geo_boxplot(boxplot_data,col_name,x_pad,scalex,scaley,id,where_append){
         sq = median_of_array(max_array);  // second quarter = the average between median to max
 
     var mydata2 = [], // lines data
-     mydata = [], // text data
-     mydata3=[]; // rect data
+        mydata = [], // text data
+        mydata3=[]; // rect data
 
+    console.log("max ="+max+" min ="+min+" median ="+median+" fq ="+fq+" sq ="+sq);
+    if(typeof  max != "undefined") {
+        // fill scaled data of geometry elem
+        //max line
+        Fill_DataObject.line(mydata2, 20 + x_pad, scaley(max), 50 + x_pad, scaley(max), "black", 5, "max");
+        Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(max + 0.5), "middle", "12px sans-serif", "black", max, 't');
 
-    // fill scaled data of geometry elem
-    //max line
-    Fill_DataObject.line(mydata2,20 + x_pad, scaley(max),50 + x_pad, scaley(max), "black", 5, "max");
-    Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(max + 0.5), "middle", "12px sans-serif", "black", max, 't');
+        //min line
+        Fill_DataObject.line(mydata2, 20 + x_pad, scaley(min), 50 + x_pad, scaley(min), "black", 5, "min");
+        Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(min - 0.8), "middle", "12px sans-serif", "black", min, 't');
 
-    //min line
-    Fill_DataObject.line(mydata2, 20 + x_pad, scaley(min), 50 + x_pad, scaley(min), "black", 5, "min");
-    Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(min-0.8), "middle", "12px sans-serif", "black", min, 't');
+        //fq ,sq lines
+        Fill_DataObject.rect(mydata3, 20 + x_pad, scaley(sq), (50 + x_pad) - (20 + x_pad), scaley(fq) - scaley(sq), 0, 0, "#e80e6b", "white", 3, 0.9, id);
 
-    //fq ,sq lines
-    Fill_DataObject.rect(mydata3,20+x_pad,scaley(sq),(50+x_pad)-(20+x_pad),scaley(fq)-scaley(sq),0,0,"#e80e6b","white",3,0.9,id);
+        // median lines
+        Fill_DataObject.line(mydata2, 20 + x_pad, scaley(median), 50 + x_pad, scaley(median), "white", 3, "median");
+        Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(median + 0.2), "middle", "12px sans-serif", "black", median, 't');
 
-    // median lines
-    Fill_DataObject.line(mydata2, 20 + x_pad, scaley(median), 50 + x_pad, scaley(median), "white", 3, "median");
-    Fill_DataObject.text(mydata, (20 + x_pad + 50 + x_pad) / 2, scaley(median + 0.2), "middle", "12px sans-serif", "black", median, 't');
+        // sq lines
+        Fill_DataObject.line(mydata2, (20 + x_pad + 50 + x_pad) / 2, scaley(max), (20 + x_pad + 50 + x_pad) / 2, scaley(sq), "black", 2);
 
-    // sq lines
-    Fill_DataObject.line(mydata2, (20 + x_pad + 50 + x_pad) / 2, scaley(max), (20 + x_pad + 50 + x_pad) / 2, scaley(sq), "black", 2);
+        // fq lines
+        Fill_DataObject.line(mydata2, (20 + x_pad + 50 + x_pad) / 2, scaley(min), (20 + x_pad + 50 + x_pad) / 2, scaley(fq), "black", 2);
 
-    // fq lines
-    Fill_DataObject.line(mydata2, (20 + x_pad + 50 + x_pad) / 2, scaley(min), (20 + x_pad + 50 + x_pad) / 2, scaley(fq), "black", 2);
-
-
+    }
     //simple transition
     Main_Bound_region.G(where_append).on("mouseover", function () {
         d3.select(this).selectAll("rect").attr("fill", "white");
@@ -145,10 +146,27 @@ function geo_boxplot(boxplot_data,col_name,x_pad,scalex,scaley,id,where_append){
  * */
 function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
 
+
+
     //appending new g ele
-    Main_Bound_region.G(where_append).transition().attr("transform", "translate(" + x_pad + "," + y_pad + ")")
-        .duration(2000) // this is 1s
-        .delay(100);//.call(brush);     // this is 0.1s;
+    var gbrush= Main_Bound_region.G(where_append).transition().attr("transform", "translate(" + x_pad + "," + y_pad + ")")
+        .duration(2000)
+        .delay(100);
+
+    // scale data
+    var width = d3.select("#g" + id).attr("width");
+    var height = d3.select("#g" + id).attr("height");
+    var scalex = Scale.Quntitative.linear(csv, col2, col2, 0, 0, width, 0, 'x');
+    var scaley = Scale.Quntitative.linear(csv, col1, col1, 0, 0, height, 0, 'y');
+
+
+    //Brushing Interaction
+    var brush = d3.svg.brush()
+        .x(scalex)
+        .y(scaley)
+        .on("brushstart", brushstart)
+        .on("brush", brushmove);
+    //   .on("brushend", brushend);
 
 
 
@@ -166,28 +184,20 @@ function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
     // generate range of color
     var colors=d3.scale.category20();
 
-
-    // scale data
-    var width = d3.select("#g" + id).attr("width");
-    var height = d3.select("#g" + id).attr("height");
-    var scalex = Scale.Quntitative.linear(csv, col1, col1, 0, 0, width, 0, 'x');
-    var scaley = Scale.Quntitative.linear(csv, col2, col2, 0, 0, height, 0, 'y');
-
     for (var i = 0; i < vcol1.length; i++) {
 
         if (isNaN(vcol2[i]) == false && isNaN(vcol1[i]) == false) // check if x or y have string value
         {
-            if(typeof  vspecifes[0]=="undefined")
-                Fill_DataObject.circle(mydata, scalex(vcol1[i]), scaley(vcol2[i]), 2.5, "black", 1,color); //create data object for circles
+            if (typeof  vspecifes[0] == "undefined")
+                Fill_DataObject.circle(mydata, scalex(vcol2[i]), scaley(vcol1[i]), 2.5, "black", 1, color); //create data object for circles
 
             else
-            Fill_DataObject.circle(mydata, scalex(vcol1[i]), scaley(vcol2[i]), 2.5, "black", 1, colors(vspecifes[i])); //create data object for circles
-
-        }
-    }
+                Fill_DataObject.circle(mydata, scalex(vcol2[i]), scaley(vcol1[i]), 2.5, "black", 1, colors(vspecifes[i])); //create data object for circles
+        }}
 
     // x axis
-    Geo_Primitives.Draw_Axis('v',col2,5,scaley,true,'g' + id).attr("class", "x axis");
+    Geo_Primitives.Draw_Axis('v', col2, 5, scaley, true, 'g' + id).attr("class", "x axis");
+
 
 
     // border of scatterplot
@@ -210,7 +220,7 @@ function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
     Geo_Primitives.DrawRect(square, "g" + id);
 
     // y axis
-    Geo_Primitives.Draw_Axis('h',col1,5,scalex,true,'g' + id).attr("class", "y axis");
+    Geo_Primitives.Draw_Axis('h', col1, 5, scalex, true, 'g' + id).attr("class", "y axis");
 
 
     //render circles
@@ -218,6 +228,21 @@ function geo_scatterplot(csv,col1,col2,color,x_pad,y_pad,id,where_append){
         .text(function (d) {
             return col1 + "=" + Math.round(scalex.invert(d.cx) * 100) / 100 + " , " + col2 + "=" + Math.round(scaley.invert(d.cy) * 100) / 100;
         });
+
+    gbrush.call(brush);     // this is 0.1s;
+
+
+    function brushstart(){
+        //brush.clear();
+    }
+    function brushmove() {
+        var e=brush.extent();
+        d3.selectAll("circle").classed("hidden", function(d) {
+            return e[0][0] > Math.round(scalex.invert(d.cx) * 100) / 100 || Math.round(scalex.invert(d.cx) * 100) / 100 > e[1][0];
+            // || e[0][1] > Math.round(scaley.invert(d.cy) * 100) / 100 || Math.round(scaley.invert(d.cy) * 100) / 100 > e[1][1];
+
+        });
+    }
 }
 
 
@@ -240,10 +265,10 @@ function ScatterPlotMatrix(csv,swidth,sheight,color){
     plot.g_height=plot.svg_height/(no_of_cols)-padding-5;
 
     //Interaction Zoom
-   var svg= plot.SVG("body");
+    var svg= plot.SVG("body");
     var myappend=plot.G("svg").attr("id");
     var myappend2=plot.G(myappend).attr("transform", "translate("+padding+",25)").attr("id");
-    svg.call(Interaction.Zoom(1,8,myappend2));
+    //svg.call(Interaction.Zoom(1,8,myappend2));
 
     //Data Transforms
     var id=plot.id_Group_Bound_region;
@@ -281,7 +306,7 @@ function Histogram(dataset,swidth,sheight,col_name){
     var svg= histogram.SVG("body");
     var myappend=histogram.G("svg").attr("id");
     var myappend2=histogram.G(myappend).attr("transform", "translate(40,10)").attr("id");
-    svg.call(Interaction.Zoom(1,8,myappend2))
+    //svg.call(Interaction.Zoom(1,8,myappend2))
 
     //Data Transforms
     var data = [],vkey=[],vvalue=[],mydata=[],mydata2=[];
@@ -299,7 +324,7 @@ function Histogram(dataset,swidth,sheight,col_name){
             return +d[traits2[1]];
         })])
         .range([height,0]);
-        var x=Scale.Quntitative.linear("","","",max_of_array(vkey)+width/vkey.length,min_of_array(vkey),width,0,"x");
+    var x=Scale.Quntitative.linear("","","",max_of_array(vkey)+width/vkey.length,min_of_array(vkey),width,0,"x");
 
     var pad= 0,id=0;
     for(var i=0;i<vkey.length;i++) {
@@ -347,7 +372,7 @@ function Boxplot(csv,swidth,sheight,append_id,scale,coordinate) {
     var svg= boxplot.SVG(append_id);
     var myappend=boxplot.G("svg").attr("id");
     var myappend2=boxplot.G(myappend).attr("transform", "translate(50,25)").attr("id");
-    svg.call(Interaction.Zoom(1,8,myappend2))
+    //svg.call(Interaction.Zoom(1,8,myappend2))
 
 
     //Scale
@@ -393,8 +418,7 @@ function Boxplot(csv,swidth,sheight,append_id,scale,coordinate) {
             id += 1;
             x_pad += 70;
         }
-       }
-
+    }
 
 
     //Coordinate Axis
