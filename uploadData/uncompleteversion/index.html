@@ -1,93 +1,44 @@
-<html ng-app="demoApp">
+<html>
     <head>
         <link rel="stylesheet" type="text/css" href="design.css">
         <title>Data Visualization</title>
         <script src="d3/d3.min.js"></script>
-        <script src="scatterplot.js"></script>
-    </head>
-    <body >
-        <div ng-view>
-        </div>
-
         <script src="angular.min.js"></script>
         <script src="angular-route.min.js"></script>
         <script src="CSV_TO_JSON.js"></script>
         <script src="TSV_TO_JSON.js"></script>
-        <script type="text/javascript">
-                            var demoApp = angular.module('demoApp', ['ngRoute']);
-                            demoApp.config(function ($routeProvider) {
-                                $routeProvider
-                                        .when('/',
-                                                {
-                                                    controller: 'dataSetController',
-                                                    templateUrl: 'view1.html'
-                                                })
-                                        .when('/view2',
-                                                {
-                                                    controller: 'compineGraphsWithData',
-                                                    templateUrl: 'view2.html'
-                                                })
-                                        .otherwise({redirectTo: '/'})
-                            });
+        <script src="UploadDataModule/uploadModule.js"></script>
+        <script src="UploadDataModule/graphModule.js"></script>
+        <script src="plots.js"></script>
+        <script src="Geometry.js"></script>
+        <script src="render.js"></script>
+        <script src="InteractionLib.js"></script>
+    </head>
+    <body >
+        <div id="div1"></div>
 
-                            demoApp.service('sharedDataObject', function () {
-                                var dataObject;
-                                return {
-                                    getDataObject: function () {
-                                        return dataObject;
-                                    },
-                                    setDataObject: function (value) {
-                                        dataObject = value;
-                                    }
-                                };
-                            });//this service to share Data Object between controlles(graphs)
+        <div ng-app="mainModule">
+            <div data-ng-controller="uploadControl">
+                <input type="file"  name='file' onchange="angular.element(this).scope().upload(this.files)" />
+            </div>
 
-                            demoApp.controller('compineGraphsWithData', compineGraphsWithData);    //this controlle to get Data from Json file and put it On (shareDataObject service)   
-                            function compineGraphsWithData($scope, sharedDataObject) {
-                                $scope.ScatterPlot = function () {
-                                    arrange(sharedDataObject.getDataObject());
-                                };
-                            };//compineGraphsWithData and fire graph function
+            <div data-ng-controller="compineGraphsWithData">
+                <button ng-click="scatter()">Scatter plot</button>
+            </div>
+            <div data-ng-controller="extractDims">
+                <button ng-click="getdimensions()">getdimensions</button>
+                <form>  
+                    <div data-ng-repeat="dim in dimension">
+                    <input  type="checkbox"  id={{dim}} value={{dim}}>{{dim}}
+                    <br>
+                    </div>
+                    <button  data-ng-click="getcheckedbox()">done</button>
+                </form>
+            </div>
+            <script src="UploadDataModule/mainModule.js"></script>
+        </div>
 
-                            demoApp.controller('dataSetController', dataSetController);//load data set and but it on sharedDataObject service
-                            function dataSetController($scope, sharedDataObject) {
-                                $scope.datasetfile;
-                                var file;
-                                $scope.getDataSetFile = function () {
-                                    $scope.datasetfile = document.getElementById('dataset').files[0].name;
-                                    file = document.getElementById('dataset').files[0];
-                                    var reader = new FileReader();
-                                    reader.onload = function (evt) {
-                                        var result = evt.target.result;
-                                        var Json;
-                                        switch (file.name.split('.').pop()) {
-                                            case 'csv':
-                                                Json = CSV2JSON(result);
-                                                dataset = JSON.parse(Json);
-                                                sharedDataObject.setDataObject(dataset);
-                                                console.log(dataset);
-                                                break;
-                                            case 'json':
-                                                Json = result;
-                                                dataset = JSON.parse(Json);
-                                                sharedDataObject.setDataObject(dataset);
-                                                console.log(dataset);
-                                                break;
-                                            case 'tsv':
-                                                Json = tsvJSON(result);
-                                                dataset = JSON.parse(Json);
-                                                sharedDataObject.setDataObject(dataset);
-                                                console.log(dataset);
-                                                break;
-                                            default :
-                                                alert("this extension not supported");
-                                        }
-                                    };
-                                    reader.readAsText(file);
-                                    $scope.$apply();
-                                };
-                            };
-
-        </script>
     </body>
 </html>
+<!--<div id="dis" ng-view>
+        </div>-->
