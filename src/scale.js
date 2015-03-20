@@ -1,7 +1,10 @@
+/**
+ * Made by : Mohamed Sweelam
+ * 15/3/2015
+ * */
+ 
 var Scale = {};             // Parent Scale Object.
-
 Scale.Quntitative = {};     // Quantitative types of scale.
-
 Scale.Ordinal = {};         // Ordinal types : String and characters .
 
 /**
