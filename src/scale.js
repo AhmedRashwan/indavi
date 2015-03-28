@@ -1,3 +1,7 @@
+/**
+ * Made by / Mohamed Sweelam.
+ * Data 15-2-2015
+ * */
 var Scale = {};             // Parent Scale Object.
 
 Scale.Quntitative = {};     // Quantitative types of scale.
@@ -237,3 +241,24 @@ Scale.Ordinal.char = function(Dataset, chars_obj, max_col_name,min_col_name,  ax
     }
 };
 
+/**
+     *  Description
+     * @ method : Color
+     * @ inputs : Category ID ect.(10,20,20b,20c).
+     * @ return : Object
+     * */
+Scale.Color = function(Category_id){
+
+        if(Category_id !=null) {
+            if (Category_id == '10')
+                return d3.scale.category10();
+            else if(Category_id=='20b')
+                return d3.scale.category20b();
+            else if(Category_id=='20c')
+                return d3.scale.category20c();
+            else if(Category_id=='20')
+                return d3.scale.category20();
+            else
+                console.log("No Color Category With this ID");
+        }
+};
