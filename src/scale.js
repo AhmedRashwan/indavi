@@ -205,40 +205,47 @@ Scale.Time.FullDate = function(Dataset,max_col_name,min_col_name, start_year, la
     }
 };
 
+
 /**
  * Description
  * @method: Ordinal char.
- * @param Dataset, chars_obj, max_col_name, min_col_name, axis
+ * @param Dataset, chars_obj, axis
  * @returns ordinal char object.
  */
-Scale.Ordinal.char = function(Dataset, chars_obj, max_col_name,min_col_name,  axis) {
+Scale.Ordinal.char = function(Str_col, chars_obj,  axis) {
+    var points = [];
     if (axis == "x" || axis == "X") {
+        var k = d3.scale.ordinal()
+            .domain(Str_col)
+            .range(chars_obj);
 
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1) {
-            return d3.scale.ordinal()
-                .domain(Dataset)
-                .range(chars_obj);
+        for (var i = 0; i < col.length; i++) {
+            points.push(k(i));
         }
-        else {
-            console.log("Error in ordinal char x-axis");
-        }
+        return points;
     }
 
-    else if (axis == "y" || axis == "Y") {
+    else {
+        console.log("Error in ordinal char x-axis");
+    }
 
-        if (Dataset.length < 1 && max_col_name.length < 1 && min_col_name.length < 1){
-            return d3.scale.ordinal()
-                .domain(Dataset)
+
+    if (axis == "y" || axis == "Y") {
+
+            var k = d3.scale.ordinal()
+                .domain(Str_col)
                 .range(chars_obj);
+
+            for(var i=0; i<col.length; i++){
+                points.push(k(i));
+            }
+
+            return points;
         }
         else {
             console.log("Error in ordinal char y-axis");
         }
-    }
 
-    else{
-        console.log("Error in ordinal char");
-    }
 };
 
 /**
