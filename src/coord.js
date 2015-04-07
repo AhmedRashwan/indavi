@@ -3,8 +3,9 @@
  */
 
 var coord = {
-    
-    /** 2D_ Cartesian coordinate **/
+
+/** To Draw  2D Cartesian Coordinate **/
+
     Cartesian_2D : function(scale,label,ticksNum,orientation,where_append){
         // scale = data scale object , label = text el will write on axis, ticksNum= number of ticks in axis,
         // orientation = (bottom or left), where_append = the position where will render el coordinate.
@@ -60,50 +61,39 @@ var coord = {
                 .style("stroke", "#ccc");
 
             return d3.select(Position).append("g").attr("transform", "translate(0,0)").call(axis_coordinate); //translate to (0,0)
-
         }},
+        
 
+/**Draw Polar ROH Coordinate**/
 
+    Polar_roh_2D : function(maxVal,scale,label,TicksNum,radius,where_append){
 
-/**2D_ Polar Coordinate**/
-    Polar_2D : function(maxVal,scale,label,TicksNum,radius,where_append){
         // scale = data scale object , label = text which will write on axis, ticksNum= number of circles on grid ,
         // Radius = radius of circles in coordinate
         //  where_append = the position where will render el coordinate.
 
         var Position= appending_area+where_append;
-        var sdat = []; // create verual data object to can draw grid .. divide el svg into circle with equal range
+        var sdat = []; // create verual data object to can draw grid .. divide el svg int circle with equal range
         console.log(maxVal);
-        var ratio = radius/maxVal; // like scale use it in text label on circles 
+        var ratio = radius/maxVal;
         console.log(ratio);
     
         for (var i = 0; i <= TicksNum; i++) {
-            sdat[i] = (radius / TicksNum) * i; 
-            console.log( sdat[i]+" --  "+ scale(sdat[2]));
-        }
+            sdat[i] = (radius / TicksNum) * i;
+           // console.log( sdat[i]+" --  "+ scale(sdat[2]));
+            }
 
-        var circleAxes = d3.select(Position).append("g") // create circles as polar coordinate (axis)
+        var circleAxes = d3.select(Position).append("g")
             .selectAll("g")
-            .data(sdat)//.data(r.ticks(TicksNum)) // another way to load data
+            .data(sdat)//.data(r.ticks(TicksNum))
             .enter().append("g")
             .append("circle")
-            .attr("r", function(d){return d;}) //.attr("r", r) // choose when use the previous way
+            .attr("r", function(d){return d;}) //.attr("r", r)
             .style("fill", "none")
             .style("stroke", "#111")
-            .style("stroke-width", 5)
-          //  .style("stroke-dasharray", " 1,4")
+            .style("stroke-width",4);
 
-/*
-        var circleText = d3.select(Position).selectAll("circleAxes") // text or label about data on circles 
-            .data(sdat).enter().append("text")
-            .attr("x", 0)
-            .attr("y", function (d) {  return -d; })
-            .attr("transform", function (d) { return "rotate(15)";  })
-            .text(function (d) {  return Math.ceil(d / ratio); });
-*/
-
-        //create a vertical axis as guid 
-        scale= scale.range([radius,0]) // change range to change the map of data on y axis
+        scale= scale.range([radius,0])
         var axis = d3.svg.axis()
             .ticks(TicksNum)
             .scale(scale)
@@ -113,39 +103,58 @@ var coord = {
             .attr("transform","translate(-220,-220)")
             .call(axis)
             .style("fill", "none")
-            .style("stroke", "#777");
+            .style("stroke", "#ccc");
 
-        // create a lines from the center as grid 
-        var gridAxes = d3.select(Position).append("g")
-            .selectAll("g")
-            .data(d3.range(0, 360, 30)) 
-            .enter().append("g")
-            .attr("transform", function (d) {
-                return "rotate(" + -d + ")";
-            })
-            .append("line")
-            .attr("x2", radius)
-            .style("fill", "none")
-            .style("stroke", "#777")
-            .style("stroke-dasharray", " 1,4")
-/*
-
-        //text on the grid line that cut across with the circles 
-         scale=scale.range([0,360])
-        var gridText = d3.select(Position).selectAll("gridAxes")
-            .data(d3.range(0, scale(maxVal-1),(360/TicksNum))).enter().append("text")
-            .attr("x", radius + 6)
-            .attr("y", ",35em")
-            .style("text-anchor", "end+5")
-            .attr("transform", function (d) {  return "rotate(" + -d + ")"; })
-            .text(function (d) { return d + "°";  });
-*/
-        //label by column name of data dimention just as legend 
         var Label = d3.select(Position).append("text")
+            .attr("transform","translate(0,-230)")
             .style("text-anchor", "middle")
             .style("font", "15px sans-serif")
             .style("font-weight", "bold")
             .text(label)
-   }
 
- }
+    },
+
+    
+/** To Draw Polar theta coordinate  **/
+
+    Polar_theeta_2D:function(maxVal,scale,label,TicksNum,radius,where_append){
+        var Position= appending_area+where_append;
+        scale=scale.range([0,360]);
+        console.log(maxVal);
+        var ratio = radius/maxVal;
+        console.log(ratio);
+        var gridAxes = d3.select(Position).append("g")
+            .selectAll("g")
+            .data(d3.range(0, (scale(maxVal-1) ),(360/TicksNum) ))
+            .enter().append("g")
+            .attr("transform", function (d) {
+                return "rotate(" + (d-90) + ")";
+            })
+            .append("line")
+            .attr("x2", radius)
+            .style("fill", "none")
+            .style("stroke", "#ccc");
+
+         var gridText = d3.select(Position).selectAll("gridAxes")
+         .data(d3.range(0, (scale(maxVal-1) ),(360/TicksNum))).enter().append("text")
+         .attr("x", radius + 6)
+         .attr("y", ",35em")
+         .style("text-anchor", "end+5")
+         .attr("transform", function (d) {  return "rotate(" + (d-90) + ")"; })
+         .text(function (d) { return d;  });
+
+        var circleAxes = d3.select(Position).append("g")
+            .append("circle")
+            .attr("r", radius) //.attr("r", r)
+            .style("fill", "none")
+            .style("stroke", "#111")
+            .style("stroke-width",4);
+        var Label = d3.select(Position).append("text")
+            .attr("transform","translate(0,-230)")
+            .style("text-anchor", "middle")
+            .style("font", "15px sans-serif")
+            .style("font-weight", "bold")
+            .text(label)
+    }
+
+}
